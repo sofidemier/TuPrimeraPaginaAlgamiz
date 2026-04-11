@@ -1,0 +1,62 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Clientes Premium — ClienteHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Clientes Premium</h1>
+    <p>{{ premiums|length }} cliente{{ premiums|length|pluralize }} con membresía premium</p>
+  </div>
+  <a href="{% url 'nuevo_premium' %}" class="btn btn-primary">+ Promover a Premium</a>
+</div>
+
+{% if premiums %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Cliente</th>
+        <th>Email</th>
+        <th>Nivel</th>
+        <th>Descuento</th>
+        <th>Puntos</th>
+        <th>Alta Premium</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for p in premiums %}
+      <tr>
+        <td style="color:var(--text-dim); font-size:0.8rem;">{{ forloop.counter }}</td>
+        <td style="font-weight:500;">{{ p.cliente.nombre }}</td>
+        <td style="color:var(--text-muted);">{{ p.cliente.email }}</td>
+        <td>
+          {% if p.nivel == 'platino' %}
+            <span class="badge badge-gold">💎 Platino</span>
+          {% elif p.nivel == 'oro' %}
+            <span class="badge badge-gold">🥇 Oro</span>
+          {% else %}
+            <span class="badge badge-gray">🥈 Plata</span>
+          {% endif %}
+        </td>
+        <td style="color:var(--gold); font-weight:600;">{{ p.descuento_porcentaje }}%</td>
+        <td>{{ p.puntos }} pts</td>
+        <td style="color:var(--text-muted); font-size:0.85rem;">{{ p.fecha_alta_premium|date:"d/m/Y" }}</td>
+        <td>
+          <a href="{% url 'detalle_cliente' p.cliente.pk %}" class="btn btn-ghost btn-sm">Ver →</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">⭐</div>
+  <h3>No hay clientes premium aún</h3>
+  <p>Promové un cliente existente para que acceda a descuentos y puntos.</p>
+  <a href="{% url 'nuevo_premium' %}" class="btn btn-primary">+ Promover a Premium</a>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,77 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Buscar Clientes — ClienteHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Buscar Clientes</h1>
+    <p>Buscá por nombre o email en la base de datos</p>
+  </div>
+</div>
+
+<form method="get" novalidate>
+  <div class="search-bar">
+    {{ form.busqueda }}
+    <button type="submit" class="btn btn-primary">Buscar</button>
+    {% if query %}
+      <a href="{% url 'buscar_cliente' %}" class="btn btn-ghost">Limpiar</a>
+    {% endif %}
+  </div>
+</form>
+
+{% if resultados is not None %}
+  {% if query %}
+    <p style="color:var(--text-muted); font-size:0.875rem; margin-bottom:1.5rem;">
+      {{ resultados|length }} resultado{{ resultados|length|pluralize }} para "<strong style="color:var(--text);">{{ query }}</strong>"
+    </p>
+  {% endif %}
+
+  {% if resultados %}
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Nombre</th>
+          <th>Email</th>
+          <th>Teléfono</th>
+          <th>Saldo</th>
+          <th>Premium</th>
+          <th></th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for cliente in resultados %}
+        <tr>
+          <td style="font-weight:500;">{{ cliente.nombre }}</td>
+          <td style="color:var(--text-muted);">{{ cliente.email }}</td>
+          <td style="color:var(--text-muted);">{{ cliente.telefono }}</td>
+          <td style="color:var(--gold); font-weight:600;">${{ cliente.saldo }}</td>
+          <td>
+            {% if cliente.premium %}
+              <span class="badge badge-gold">⭐ {{ cliente.premium.get_nivel_display }}</span>
+            {% else %}
+              <span class="badge badge-gray">—</span>
+            {% endif %}
+          </td>
+          <td>
+            <a href="{% url 'detalle_cliente' cliente.pk %}" class="btn btn-ghost btn-sm">Ver →</a>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <div class="empty-state">
+    <div class="icon">🔍</div>
+    <h3>Sin resultados</h3>
+    <p>No se encontraron clientes para "{{ query }}".</p>
+  </div>
+  {% endif %}
+{% else %}
+<div style="text-align:center; padding:3rem; color:var(--text-dim);">
+  <div style="font-size:3rem; margin-bottom:1rem; opacity:0.3;">🔍</div>
+  <p style="font-size:0.95rem;">Escribí un nombre o email para buscar.</p>
+</div>
+{% endif %}
+{% endblock %}

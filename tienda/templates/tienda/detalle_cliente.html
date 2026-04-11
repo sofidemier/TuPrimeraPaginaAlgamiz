@@ -1,0 +1,123 @@
+{% extends 'tienda/base.html' %}
+{% block title %}{{ cliente.nombre }} — ClienteHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>{{ cliente.nombre }}</h1>
+    <p>
+      Registrado el {{ cliente.fecha_registro|date:"d/m/Y" }}
+      {% if es_premium %}· <span style="color:var(--gold);">⭐ Premium {{ cliente.premium.get_nivel_display }}</span>{% endif %}
+    </p>
+  </div>
+  <div style="display:flex; gap:0.75rem;">
+    <a href="{% url 'lista_clientes' %}" class="btn btn-ghost">← Volver</a>
+    <a href="{% url 'nueva_compra' %}" class="btn btn-primary">+ Nueva Compra</a>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+
+  <div class="card {% if es_premium %}card-gold{% endif %}">
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1.25rem;">
+      Datos del cliente
+    </h2>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="key">Email</div>
+        <div class="val">{{ cliente.email }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Teléfono</div>
+        <div class="val">{{ cliente.telefono }}</div>
+      </div>
+      <div class="detail-item" style="grid-column: 1/-1;">
+        <div class="key">Dirección</div>
+        <div class="val">{{ cliente.direccion }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Saldo disponible</div>
+        <div class="val" style="color:var(--gold); font-weight:600; font-size:1.1rem;">${{ cliente.saldo }}</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Total gastado</div>
+        <div class="val" style="font-weight:600;">${{ cliente.total_gastado }}</div>
+      </div>
+    </div>
+  </div>
+
+  {% if es_premium %}
+  <div class="card card-gold">
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1.25rem; color:var(--gold);">
+      ⭐ Beneficios Premium
+    </h2>
+    <div class="detail-grid">
+      <div class="detail-item">
+        <div class="key">Nivel</div>
+        <div class="val">
+          <span class="badge badge-gold">{{ cliente.premium.get_nivel_display }}</span>
+        </div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Descuento</div>
+        <div class="val" style="color:var(--gold); font-weight:600;">{{ cliente.premium.descuento_porcentaje }}%</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Puntos acumulados</div>
+        <div class="val" style="font-weight:600;">{{ cliente.premium.puntos }} pts</div>
+      </div>
+      <div class="detail-item">
+        <div class="key">Alta premium</div>
+        <div class="val">{{ cliente.premium.fecha_alta_premium|date:"d/m/Y" }}</div>
+      </div>
+    </div>
+  </div>
+  {% else %}
+  <div class="card" style="display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:2rem;">
+    <div style="font-size:2.5rem; margin-bottom:1rem; opacity:0.3;">⭐</div>
+    <h3 style="font-size:1rem; color:var(--text-dim); margin-bottom:0.5rem;">Cliente estándar</h3>
+    <p style="color:var(--text-dim); font-size:0.85rem; margin-bottom:1.25rem;">Este cliente aún no tiene beneficios premium.</p>
+    <a href="{% url 'nuevo_premium' %}" class="btn btn-ghost btn-sm">Promover a Premium</a>
+  </div>
+  {% endif %}
+
+</div>
+
+<div class="card">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.25rem;">
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.1rem;">
+      Historial de compras ({{ compras|length }})
+    </h2>
+    <a href="{% url 'nueva_compra' %}" class="btn btn-ghost btn-sm">+ Registrar compra</a>
+  </div>
+
+  {% if compras %}
+  <div class="table-wrap" style="border:none;">
+    <table>
+      <thead>
+        <tr>
+          <th>Producto</th>
+          <th>Precio</th>
+          <th>Fecha</th>
+          <th>Descripción</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for compra in compras %}
+        <tr>
+          <td style="font-weight:500;">{{ compra.producto }}</td>
+          <td style="color:var(--gold); font-weight:600;">${{ compra.precio }}</td>
+          <td style="color:var(--text-muted); font-size:0.85rem;">{{ compra.fecha|date:"d/m/Y H:i" }}</td>
+          <td style="color:var(--text-muted); font-size:0.85rem;">{{ compra.descripcion|default:"—" }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--text-dim); font-size:0.875rem; text-align:center; padding:2rem 0;">
+    Este cliente aún no tiene compras registradas.
+  </p>
+  {% endif %}
+</div>
+{% endblock %}

@@ -1,0 +1,85 @@
+{% extends 'tienda/base.html' %}
+{% block title %}ClienteHub — Inicio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Panel de Control</h1>
+    <p>Resumen general del sistema de gestión de clientes</p>
+  </div>
+</div>
+
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-number">{{ total_clientes }}</div>
+    <div class="stat-label">Clientes Totales</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ total_premium }}</div>
+    <div class="stat-label">Clientes Premium</div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-number">{{ total_compras }}</div>
+    <div class="stat-label">Compras Registradas</div>
+  </div>
+</div>
+
+<div style="display:grid; grid-template-columns: 1fr 1fr; gap:1.5rem; margin-bottom:2rem;">
+
+  <div class="card">
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1.25rem; color:var(--text);">
+      Acciones rápidas
+    </h2>
+    <div style="display:flex; flex-direction:column; gap:0.6rem;">
+      <a href="{% url 'nuevo_cliente' %}" class="btn btn-ghost" style="justify-content:flex-start;">
+        👤 Registrar nuevo cliente
+      </a>
+      <a href="{% url 'nuevo_premium' %}" class="btn btn-ghost" style="justify-content:flex-start;">
+        ⭐ Promover a Premium
+      </a>
+      <a href="{% url 'nueva_compra' %}" class="btn btn-ghost" style="justify-content:flex-start;">
+        🛒 Registrar compra
+      </a>
+      <a href="{% url 'buscar_cliente' %}" class="btn btn-ghost" style="justify-content:flex-start;">
+        🔍 Buscar cliente
+      </a>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2 style="font-family:'Playfair Display',serif; font-size:1.1rem; margin-bottom:1.25rem; color:var(--text);">
+      Últimas compras
+    </h2>
+    {% if ultimas_compras %}
+      {% for compra in ultimas_compras %}
+        <div style="display:flex; justify-content:space-between; align-items:center; padding:0.6rem 0; border-bottom:1px solid var(--border);">
+          <div>
+            <div style="font-size:0.9rem; color:var(--text);">{{ compra.producto }}</div>
+            <div style="font-size:0.78rem; color:var(--text-muted);">{{ compra.cliente.nombre }}</div>
+          </div>
+          <div style="color:var(--gold); font-weight:600; font-size:0.9rem;">${{ compra.precio }}</div>
+        </div>
+      {% endfor %}
+    {% else %}
+      <p style="color:var(--text-dim); font-size:0.875rem;">Aún no hay compras registradas.</p>
+    {% endif %}
+  </div>
+
+</div>
+
+<div class="card card-gold">
+  <div style="display:flex; align-items:center; gap:1rem;">
+    <div style="font-size:2rem;">⭐</div>
+    <div>
+      <div style="font-family:'Playfair Display',serif; font-size:1.05rem; color:var(--gold); margin-bottom:0.2rem;">
+        Sistema de Clientes Premium
+      </div>
+      <div style="color:var(--text-muted); font-size:0.875rem;">
+        Promové clientes a niveles Plata, Oro o Platino y asignales descuentos y puntos de fidelidad.
+      </div>
+    </div>
+    <a href="{% url 'lista_premium' %}" class="btn btn-primary btn-sm" style="margin-left:auto;">Ver Premium →</a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,66 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Clientes — ClienteHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Clientes</h1>
+    <p>{{ clientes|length }} cliente{{ clientes|length|pluralize }} registrado{{ clientes|length|pluralize }}</p>
+  </div>
+  <a href="{% url 'nuevo_cliente' %}" class="btn btn-primary">+ Nuevo Cliente</a>
+</div>
+
+{% if clientes %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Nombre</th>
+        <th>Email</th>
+        <th>Teléfono</th>
+        <th>Saldo</th>
+        <th>Premium</th>
+        <th>Compras</th>
+        <th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for cliente in clientes %}
+      <tr>
+        <td style="color:var(--text-dim); font-size:0.8rem;">{{ forloop.counter }}</td>
+        <td>
+          <a href="{% url 'detalle_cliente' cliente.pk %}" style="color:var(--text); text-decoration:none; font-weight:500;">
+            {{ cliente.nombre }}
+          </a>
+        </td>
+        <td style="color:var(--text-muted);">{{ cliente.email }}</td>
+        <td style="color:var(--text-muted);">{{ cliente.telefono }}</td>
+        <td style="color:var(--gold); font-weight:600;">${{ cliente.saldo }}</td>
+        <td>
+          {% if cliente.premium %}
+            <span class="badge badge-gold">⭐ {{ cliente.premium.get_nivel_display }}</span>
+          {% else %}
+            <span class="badge badge-gray">—</span>
+          {% endif %}
+        </td>
+        <td>
+          <span class="badge badge-blue">{{ cliente.total_compras }}</span>
+        </td>
+        <td>
+          <a href="{% url 'detalle_cliente' cliente.pk %}" class="btn btn-ghost btn-sm">Ver →</a>
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">👤</div>
+  <h3>No hay clientes registrados</h3>
+  <p>Empezá agregando tu primer cliente al sistema.</p>
+  <a href="{% url 'nuevo_cliente' %}" class="btn btn-primary">+ Nuevo Cliente</a>
+</div>
+{% endif %}
+{% endblock %}

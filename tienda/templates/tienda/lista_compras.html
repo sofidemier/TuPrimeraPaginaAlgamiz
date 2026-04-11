@@ -1,0 +1,52 @@
+{% extends 'tienda/base.html' %}
+{% block title %}Compras — ClienteHub{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1>Compras</h1>
+    <p>{{ compras|length }} compra{{ compras|length|pluralize }} registrada{{ compras|length|pluralize }}</p>
+  </div>
+  <a href="{% url 'nueva_compra' %}" class="btn btn-primary">+ Nueva Compra</a>
+</div>
+
+{% if compras %}
+<div class="table-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th>
+        <th>Producto</th>
+        <th>Cliente</th>
+        <th>Precio</th>
+        <th>Fecha</th>
+        <th>Descripción</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for compra in compras %}
+      <tr>
+        <td style="color:var(--text-dim); font-size:0.8rem;">{{ forloop.counter }}</td>
+        <td style="font-weight:500;">{{ compra.producto }}</td>
+        <td>
+          <a href="{% url 'detalle_cliente' compra.cliente.pk %}" style="color:var(--text-muted); text-decoration:none;">
+            {{ compra.cliente.nombre }}
+          </a>
+        </td>
+        <td style="color:var(--gold); font-weight:600;">${{ compra.precio }}</td>
+        <td style="color:var(--text-muted); font-size:0.85rem;">{{ compra.fecha|date:"d/m/Y H:i" }}</td>
+        <td style="color:var(--text-dim); font-size:0.85rem;">{{ compra.descripcion|default:"—"|truncatechars:40 }}</td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% else %}
+<div class="empty-state">
+  <div class="icon">🛒</div>
+  <h3>No hay compras registradas</h3>
+  <p>Registrá la primera compra de un cliente.</p>
+  <a href="{% url 'nueva_compra' %}" class="btn btn-primary">+ Nueva Compra</a>
+</div>
+{% endif %}
+{% endblock %}
